@@ -9,6 +9,15 @@ const withBundleAnalyzer = initializeBundleAnalyzer({
 
 // https://nextjs.org/docs/pages/api-reference/next-config-js
 const nextConfig: NextConfig = {
+    // Don't set assetPrefix as it can cause issues with static asset paths
+    // Remove the assetPrefix setting for standard deployment scenarios
+
+    // Enable static image import
+    images: {
+        domains: []
+    },
+
+    // Use standalone output for better performance
     output: 'standalone'
 };
 
