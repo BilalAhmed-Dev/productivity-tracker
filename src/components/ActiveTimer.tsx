@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ActiveTimerProps {
     id: string;
@@ -11,19 +11,24 @@ interface ActiveTimerProps {
 const ActiveTimer = ({ id, initialTime, onComplete }: ActiveTimerProps) => {
     const [timeRemaining, setTimeRemaining] = useState(initialTime);
     const [isRunning, setIsRunning] = useState(true);
+    const isCompletedRef = useRef(false);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        let isCompleted = false;
 
         if (isRunning && timeRemaining > 0) {
             timer = setInterval(() => {
                 setTimeRemaining((prevTime) => {
                     const newTime = prevTime - 1;
-                    if (newTime <= 0 && !isCompleted) {
+
+                    if (newTime <= 0 && !isCompletedRef.current) {
                         clearInterval(timer);
-                        isCompleted = true; // Mark as completed to prevent duplicate calls
-                        onComplete(id);
+                        isCompletedRef.current = true; // Mark as completed to prevent duplicate calls
+
+                        // Use setTimeout to ensure state updates are properly batched
+                        setTimeout(() => {
+                            onComplete(id);
+                        }, 10);
 
                         return 0;
                     }
@@ -58,7 +63,7 @@ const ActiveTimer = ({ id, initialTime, onComplete }: ActiveTimerProps) => {
                 <button
                     onClick={toggleTimer}
                     className='rounded-full p-2 transition-colors hover:bg-yellow-300 dark:hover:bg-yellow-700'
-                    aria-label={isRunning ? 'إيقاف مؤقت' : 'استمرار'}
+                    aria-label={isRunning ? 'Pause timer' : 'Resume timer'}
                     tabIndex={0}>
                     {isRunning ? (
                         <svg

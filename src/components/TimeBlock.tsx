@@ -114,7 +114,7 @@ const TimeBlock = ({
                 } ${isCompleted ? 'bg-green-200 dark:bg-green-800' : ''} ${
                     !isInProgress && !isCompleted ? 'bg-gray-200 dark:bg-gray-700' : ''
                 } transition-shadow hover:shadow-md`}
-                aria-label={`${formatTime(remainingTime)} كتلة زمنية`}
+                aria-label={`${formatTime(remainingTime)} time block`}
                 tabIndex={0}>
                 <div className='flex items-center justify-between'>
                     <span className='font-medium'>{formatTime(remainingTime)}</span>

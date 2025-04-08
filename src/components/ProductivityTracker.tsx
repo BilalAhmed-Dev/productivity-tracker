@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { sendWhatsAppNotification } from '@/utils/notifications';
+import { sendNotification } from '@/utils/notifications';
 import {
     type TimeBlockData,
     clearLocalStorageData,
@@ -103,7 +103,7 @@ const ProductivityTracker = () => {
             setBreakTimeMinutes((prev) => prev + 10);
 
             // Send notification
-            await sendWhatsAppNotification('تم اكتمال كتلة الإنتاجية!');
+            await sendNotification('Productivity Tracker', 'Productivity block completed!');
         }
     };
 
@@ -165,22 +165,22 @@ const ProductivityTracker = () => {
         const minutes = Math.round(totalCompletedMinutes % 60);
 
         if (hours > 0) {
-            return `${hours} ${hours === 1 ? 'ساعة' : 'ساعات'} و ${minutes} ${minutes === 1 ? 'دقيقة' : 'دقائق'}`;
+            return `${hours} ${hours === 1 ? 'hour' : 'hours'} and ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
         }
 
-        return `${minutes} ${minutes === 1 ? 'دقيقة' : 'دقائق'}`;
+        return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
     };
 
     return (
         <div className='container mx-auto p-4'>
             <div className='mb-6 flex items-center justify-between'>
-                <h1 className='text-2xl font-bold'>مُتعقّب الإنتاجية</h1>
-                <div className='flex space-x-4 space-x-reverse'>
+                <h1 className='text-2xl font-bold'>Productivity Tracker</h1>
+                <div className='flex space-x-4'>
                     <NotificationSettings />
                     <button
                         onClick={handleReset}
-                        className='flex items-center text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
-                        aria-label='إعادة تعيين جميع البيانات'
+                        className='flex items-center text-sm font-medium text-red-600 hover:text-red-800'
+                        aria-label='Reset all data'
                         tabIndex={0}>
                         <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -192,22 +192,20 @@ const ProductivityTracker = () => {
                             strokeWidth='2'
                             strokeLinecap='round'
                             strokeLinejoin='round'
-                            className='mr-0 ml-2'>
+                            className='mr-2'>
                             <path d='M3 6h18' />
                             <path d='M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6' />
                             <path d='M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2' />
                         </svg>
-                        إعادة تعيين
+                        Reset
                     </button>
                 </div>
             </div>
 
             <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
                 {/* Waiting Blocks */}
-                <div className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md dark:bg-gray-800'>
-                    <h2 className='sticky top-0 mb-4 bg-white py-2 text-lg font-semibold dark:bg-gray-800'>
-                        قائمة الانتظار
-                    </h2>
+                <div className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md'>
+                    <h2 className='sticky top-0 mb-4 bg-white py-2 text-lg font-semibold'>Waiting List</h2>
                     <div className='space-y-2'>
                         {waitingBlocks.map((block) => (
                             <TimeBlock
@@ -222,12 +220,10 @@ const ProductivityTracker = () => {
 
                 {/* In Progress */}
                 <div
-                    className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md dark:bg-gray-800'
+                    className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md'
                     onDragOver={handleDragOver}
                     onDrop={handleDropToInProgress}>
-                    <h2 className='sticky top-0 mb-4 bg-white py-2 text-lg font-semibold dark:bg-gray-800'>
-                        قيد التنفيذ
-                    </h2>
+                    <h2 className='sticky top-0 mb-4 bg-white py-2 text-lg font-semibold'>In Progress</h2>
                     {inProgressBlocks.length > 0 ? (
                         inProgressBlocks.map((block) => (
                             <ActiveTimer
@@ -238,40 +234,40 @@ const ProductivityTracker = () => {
                             />
                         ))
                     ) : (
-                        <div className='rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400'>
-                            اسحب كتلة زمنية هنا للبدء
+                        <div className='rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-500'>
+                            Drag a block here to start
                         </div>
                     )}
                 </div>
 
                 {/* Completed */}
-                <div className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md dark:bg-gray-800'>
-                    <div className='sticky top-0 bg-white py-2 dark:bg-gray-800'>
+                <div className='h-[calc(100vh-150px)] overflow-y-auto rounded-lg bg-white p-4 shadow-md'>
+                    <div className='sticky top-0 bg-white py-2'>
                         {/* Break time counter */}
-                        <div className='mb-3 rounded-md bg-blue-100 p-2 text-blue-800 dark:bg-blue-900 dark:text-blue-100'>
+                        <div className='mb-3 rounded-md bg-blue-100 p-2 text-blue-800'>
                             <div className='flex items-center justify-between'>
-                                <span className='text-sm font-medium'>وقت الراحة:</span>
+                                <span className='text-sm font-medium'>Break Time:</span>
                                 {isEditingBreakTime ? (
                                     <div className='flex items-center'>
                                         <input
                                             type='text'
                                             value={breakTimeInput}
                                             onChange={handleBreakTimeInputChange}
-                                            className='mr-2 w-16 rounded border border-blue-300 px-2 py-1 text-sm text-black dark:border-blue-700 dark:bg-gray-700 dark:text-white'
+                                            className='mr-2 w-16 rounded border border-blue-300 px-2 py-1 text-sm text-black'
                                             autoFocus
                                         />
                                         <button
                                             onClick={saveBreakTime}
                                             className='rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600'>
-                                            حفظ
+                                            Save
                                         </button>
                                     </div>
                                 ) : (
                                     <div className='flex items-center'>
-                                        <span className='font-bold'>{breakTimeMinutes} دقائق</span>
+                                        <span className='font-bold'>{breakTimeMinutes} minutes</span>
                                         <button
                                             onClick={startBreakTimeEdit}
-                                            className='ml-2 text-blue-600 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-100'>
+                                            className='ml-2 text-blue-600 hover:text-blue-800'>
                                             <svg
                                                 xmlns='http://www.w3.org/2000/svg'
                                                 width='14'
@@ -295,27 +291,27 @@ const ProductivityTracker = () => {
                                         onClick={() => useBreakTime(5)}
                                         className='rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600'
                                         disabled={breakTimeMinutes < 5}>
-                                        خذ استراحة 5 دقائق
+                                        Take a 5-minute break
                                     </button>
                                     <button
                                         onClick={() => useBreakTime(10)}
                                         className='rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600'
                                         disabled={breakTimeMinutes < 10}>
-                                        خذ استراحة 10 دقائق
+                                        Take a 10-minute break
                                     </button>
                                     <button
                                         onClick={() => useBreakTime(breakTimeMinutes)}
                                         className='rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700'>
-                                        استخدام كل وقت الراحة ({breakTimeMinutes} دقائق)
+                                        Use all break time ({breakTimeMinutes} minutes)
                                     </button>
                                 </div>
                             )}
                         </div>
-                        <h2 className='mb-2 text-lg font-semibold'>مكتمل</h2>
+                        <h2 className='mb-2 text-lg font-semibold'>Completed</h2>
 
                         {completedBlocks.length > 0 && (
-                            <div className='mb-4 rounded-md bg-green-100 p-2 text-green-800 dark:bg-green-900 dark:text-green-100'>
-                                <p className='text-sm font-medium'>المجموع: {formatTotalTime()}</p>
+                            <div className='mb-4 rounded-md bg-green-100 p-2 text-green-800'>
+                                <p className='text-sm font-medium'>Total: {formatTotalTime()}</p>
                             </div>
                         )}
                     </div>
@@ -335,8 +331,8 @@ const ProductivityTracker = () => {
                         ))}
                     </div>
                     {completedBlocks.length === 0 && (
-                        <div className='rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400'>
-                            لا توجد مهام مكتملة حتى الآن
+                        <div className='rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-500'>
+                            No completed tasks yet
                         </div>
                     )}
                 </div>
