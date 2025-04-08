@@ -75,7 +75,7 @@ const ProductivityTracker = () => {
         }
     };
 
-    const handleTimerComplete = async (id: string) => {
+    const handleTimerComplete = async (id: string, description: string) => {
         // First check if this block is already in completedBlocks
         const isDuplicate = completedBlocks.some((block) => block.id === id);
         if (isDuplicate) {
@@ -85,7 +85,11 @@ const ProductivityTracker = () => {
 
         const blockIndex = inProgressBlocks.findIndex((block) => block.id === id);
         if (blockIndex !== -1) {
-            const completedBlock = { ...inProgressBlocks[blockIndex], status: 'completed' as const };
+            const completedBlock = {
+                ...inProgressBlocks[blockIndex],
+                status: 'completed' as const,
+                description: description || inProgressBlocks[blockIndex].description || ''
+            };
 
             // Remove from in-progress blocks
             setInProgressBlocks((prev) => prev.filter((block) => block.id !== id));
@@ -231,6 +235,7 @@ const ProductivityTracker = () => {
                                 id={block.id}
                                 initialTime={block.remainingTime}
                                 onComplete={handleTimerComplete}
+                                initialDescription={block.description}
                             />
                         ))
                     ) : (
